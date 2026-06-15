@@ -1,0 +1,14 @@
+[
+  {
+    "name": "new_feature",
+    "default_state": false,
+    "rules": [
+      {
+        "attribute": "subscription_tier",
+        "operator": "equals",
+        "value": "gold",
+        "state": true
+      }
+    ]
+  }
+]

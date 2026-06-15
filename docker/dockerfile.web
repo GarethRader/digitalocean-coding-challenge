@@ -1,0 +1,26 @@
+# ------------------------------------------------------------------------- 
+#                               Build Stage
+# -------------------------------------------------------------------------
+    
+FROM golang:1.23.0 AS builder
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+
+# RUN go get .
+RUN go mod download
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o dist/server.exe -ldflags '-s -w' ./cmd/main.go
+
+# ------------------------------------------------------------------------- 
+#                               Final Image
+# -------------------------------------------------------------------------
+FROM scratch
+
+WORKDIR /app
+COPY --from=builder /app/dist/server.exe .
+
+ENTRYPOINT ["./server.exe"]

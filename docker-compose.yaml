@@ -1,0 +1,55 @@
+# Docker Compose configuration for development environment
+services:
+  dev:
+    image: feature-flag-server:latest
+    container_name: feature-flag-server
+    build:
+      context: .
+      dockerfile: ./docker/dockerfile.dev
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - postgres
+    volumes:
+      - ./:/app
+    environment:
+      DATABASE_URL: postgres://postgres:password@postgres:5432/app
+    env_file:
+      - ./.env
+    networks:
+      app-network:
+        ipv4_address: 10.5.0.5
+    tty: true
+    entrypoint: /bin/bash
+
+  postgres:
+    image: postgres:14.23-trixie
+    container_name: postgres
+    # build:
+    #   context: .
+    #   dockerfile: ./docker/postgres/dockerfile.postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data/pgdata
+    environment:
+      PGDATA: /var/lib/postgresql/pgdata
+      POSTGRES_USER: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: app
+      POSTGRES_PASSWORD: password
+    env_file: ./.env
+    networks:
+      app-network:
+        ipv4_address: 10.5.0.2
+
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
+    
