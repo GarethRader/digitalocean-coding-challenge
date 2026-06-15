@@ -2,6 +2,7 @@ package utils
 
 import (
 	"log"
+	"os"
 )
 
 func Log(level string, args ...any) {
@@ -22,4 +23,14 @@ func LogWarn(args ...any) {
 
 func LogError(args ...any) {
 	Log("ERROR", args...)
+}
+
+func LogFatal(args ...any) {
+	Log("FATAL", args...)
+	os.Exit(1)
+}
+
+func LogFatalf(format string, args ...any) {
+	log.Printf("[FATAL] "+format, args...)
+	os.Exit(1)
 }

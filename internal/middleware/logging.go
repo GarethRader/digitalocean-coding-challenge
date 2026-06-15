@@ -1,9 +1,11 @@
 package middleware
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"time"
+
+	"coding-blitz-02/garethrader/internal/utils"
 )
 
 type wrappedWriter struct {
@@ -27,6 +29,6 @@ func Logging(next http.Handler) http.Handler {
 
 		next.ServeHTTP(wrapped, r)
 
-		log.Printf("%s %s %d %s", r.Method, r.URL.Path, wrapped.statusCode, time.Since(start))
+		utils.LogInfo(fmt.Sprintf("%s %s %d %s", r.Method, r.URL.Path, wrapped.statusCode, time.Since(start)))
 	})
 }

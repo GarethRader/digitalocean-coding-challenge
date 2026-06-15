@@ -4,17 +4,21 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/joho/godotenv"
 )
 
 var (
-	serverPort   string
-	certFilePath string
-	keyFilePath  string
-	databaseURL  string
+	serverPort      string
+	certFilePath    string
+	keyFilePath     string
+	databaseURL     string
+	cacheMaxEntries int
 )
+
+const defaultCacheMaxEntries = 10000
 
 func Init() error {
 	ENV, err := godotenv.Read(".env")
@@ -30,6 +34,15 @@ func Init() error {
 	databaseURL = strings.TrimSpace(ENV["DATABASE_URL"])
 	if databaseURL == "" {
 		return fmt.Errorf("DATABASE_URL is not configured")
+	}
+
+	cacheMaxEntries = defaultCacheMaxEntries
+	if envValue := strings.TrimSpace(ENV["CACHE_MAX_ENTRIES"]); envValue != "" {
+		parsed, err := strconv.Atoi(envValue)
+		if err != nil || parsed <= 0 {
+			return fmt.Errorf("CACHE_MAX_ENTRIES must be a positive integer")
+		}
+		cacheMaxEntries = parsed
 	}
 
 	certFilePath = strings.TrimSpace(ENV["CERT_FILE_PATH"])

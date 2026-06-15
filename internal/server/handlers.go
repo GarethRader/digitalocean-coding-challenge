@@ -3,9 +3,10 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
+
+	"coding-blitz-02/garethrader/internal/utils"
 )
 
 type FeatureFlag struct {
@@ -155,11 +156,11 @@ func evaluateHandler(w http.ResponseWriter, r *http.Request) {
 	enabled, reason := flag.Evaluate(request.Context)
 
 	if err := flagStore.SaveUser(request.Context); err != nil {
-		log.Printf("warning: failed to save user context: %v", err)
+		utils.LogWarn("warning: failed to save user context:", err)
 	}
 
 	if err := flagStore.RecordEvaluation(flag.Name, request.Context, enabled); err != nil {
-		log.Printf("warning: failed to record evaluation: %v", err)
+		utils.LogWarn("warning: failed to record evaluation:", err)
 	}
 
 	writeJSON(w, http.StatusOK, EvaluateResponse{
