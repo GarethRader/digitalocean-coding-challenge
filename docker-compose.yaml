@@ -5,7 +5,7 @@ services:
     container_name: feature-flag-server
     build:
       context: .
-      dockerfile: ./docker/dockerfile.dev
+      dockerfile: ./docker/dockerfile.web
     ports:
       - "80:80"
       - "443:443"
